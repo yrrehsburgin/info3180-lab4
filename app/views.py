@@ -50,6 +50,26 @@ def upload():
     return render_template('upload.html', uploadForm=uploadForm)
 
 
+def get_uploaded_images():
+    listfiles=[]
+    for cwd, subdirs, files in os.walk(app.config['UPLOAD_FOLDER']):
+        for file in files:
+            if file.split('.')[-1] in ALLOWED_EXTENSIONS:
+                listfiles.append(file)
+    return listfiles
+
+
+@app.route('/files')
+def files():
+    """Render website's files page."""
+    if not session.get('logged_in'):
+        abort(401)
+        
+    fileNames = get_uploaded_images()
+    return render_template('files.html', fileNames = fileNames)
+    
+
+
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     error = None
